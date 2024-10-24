@@ -1,3 +1,4 @@
+import 'package:api_back/pages/formulario.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert' as convert;
 import 'package:http/http.dart' as http;
@@ -10,7 +11,7 @@ class MyHome extends StatefulWidget {
 }
 
 class _MyHomeState extends State<MyHome> {
-  var contador = 0;
+  //var contador = 0;
   List products = [];
 
   @override
@@ -33,45 +34,55 @@ class _MyHomeState extends State<MyHome> {
     }
   }
 
-  incrementar() {
-    contador++;
-    setState(() {});
-  }
+  // incrementar() {
+  //   contador++;
+  //   setState(() {});
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Mi app"),
-      ),
-      body: Center(
-        child: Column(
-          children: [
-            // Text("Contador:" + contador.toString()),
-            // ElevatedButton(
-            //     onPressed: () {
-            //       incrementar();
-            //     },
-            //     child: Text("Incrementar")),
-            ElevatedButton(
-                onPressed: () {
-                  productGet();
-                },
-                child: Text("Actualizar productos")),
-
-            Expanded(
-              child: ListView.builder(
-                  itemCount: products.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(products[index]['name']),
-                      subtitle: Text(products[index]['price'].toString()),
-                    );
-                  }),
-            )
-          ],
+        appBar: AppBar(
+          backgroundColor: Colors.blueAccent,
+          foregroundColor: Colors.white,
+          title: Text("Mi app"),
         ),
-      ),
-    );
+        body: Center(
+          child: Column(
+            children: [
+              // Text("Contador:" + contador.toString()),
+              // ElevatedButton(
+              //     onPressed: () {
+              //       incrementar();
+              //     },
+              //     child: Text("Incrementar")),
+              ElevatedButton(
+                  onPressed: () {
+                    productGet();
+                  },
+                  child: Text("Actualizar productos")),
+
+              Expanded(
+                child: ListView.builder(
+                    itemCount: products.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(products[index]['name']),
+                        subtitle: Text(products[index]['price'].toString()),
+                      );
+                    }),
+              )
+            ],
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+            foregroundColor: Colors.white,
+            backgroundColor: Colors.blueAccent,
+            onPressed: () {
+              //redireccionar a Formlario.dart
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => Formulario()));
+            },
+            child: Icon(Icons.add)));
   }
 }
