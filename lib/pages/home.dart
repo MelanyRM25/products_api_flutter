@@ -62,6 +62,20 @@ class _MyHomeState extends State<MyHome> {
                     itemCount: products.length,
                     itemBuilder: (context, index) {
                       return ListTile(
+                        leading: Image.network(
+                          dotenv.env['API_BACK']! + '/../images/1.png',
+                          width: 50,
+                          height: 50,
+                          errorBuilder: (context, error, stackTrace) {
+                            print(error);
+                            return Icon(Icons
+                                .error); // Muestra un ícono de error si falla la carga
+                          },
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return CircularProgressIndicator(); // Muestra un indicador de carga mientras se descarga la imagen
+                          },
+                        ),
                         title: Text(products[index]['name']),
                         subtitle: Text(products[index]['price'].toString()),
                         trailing: Row(

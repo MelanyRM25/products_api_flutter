@@ -85,6 +85,7 @@ class _FormularioState extends State<Formulario> {
               decoration: InputDecoration(labelText: "Cantidad"),
               keyboardType: TextInputType.number,
             ),
+            //Actualizar
             widget.id != null
                 ? ElevatedButton(
                     onPressed: () {
