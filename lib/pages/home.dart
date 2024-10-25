@@ -64,6 +64,60 @@ class _MyHomeState extends State<MyHome> {
                       return ListTile(
                         title: Text(products[index]['name']),
                         subtitle: Text(products[index]['price'].toString()),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                                onPressed: () async {
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Formulario(
+                                              id: products[index]['id'],
+                                              name: products[index]['name'],
+                                              price: products[index]['price'],
+                                              amount: products[index]['amount'],
+                                            )),
+                                  );
+                                  productGet();
+                                },
+                                icon: Icon(Icons.edit)),
+                            //Borrar
+                            IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () async {
+                                AlertDialog(
+                                  title: Text("Eliminar"),
+                                  content: Text(
+                                      "¿Estas seguro de eliminar este producto?"),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text('Cancelar'),
+                                    ),
+                                    TextButton(
+                                        onPressed: () async {
+                                          var url = Uri.parse(dotenv
+                                                  .env['API_BACK']! +
+                                              '/products/' +
+                                              products[index]['id'].toString());
+                                          var response = await http.delete(url);
+                                          if (response.statusCode == 200) {
+                                            productGet();
+                                          } else {
+                                            print(
+                                                'Request failed with status: ${response.statusCode}.');
+                                          }
+                                        },
+                                        child: Text("Eliminar"))
+                                  ],
+                                );
+                              },
+                            ),
+                          ],
+                        ),
                       );
                     }),
               )
