@@ -1,5 +1,6 @@
 import 'package:api_back/pages/formulario.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert' as convert;
 import 'package:http/http.dart' as http;
 
@@ -22,7 +23,8 @@ class _MyHomeState extends State<MyHome> {
   }
 
   productGet() async {
-    var url = Uri.parse('http://127.0.0.1:8000/api/products');
+    var url = Uri.parse(dotenv.env['API_BACK']! + '/products');
+
     var response = await http.get(url);
     if (response.statusCode == 200) {
       var jsonResponse = convert.jsonDecode(response.body);
@@ -50,18 +52,11 @@ class _MyHomeState extends State<MyHome> {
         body: Center(
           child: Column(
             children: [
-              // Text("Contador:" + contador.toString()),
-              // ElevatedButton(
-              //     onPressed: () {
-              //       incrementar();
-              //     },
-              //     child: Text("Incrementar")),
               ElevatedButton(
                   onPressed: () {
                     productGet();
                   },
                   child: Text("Actualizar productos")),
-
               Expanded(
                 child: ListView.builder(
                     itemCount: products.length,
@@ -78,10 +73,11 @@ class _MyHomeState extends State<MyHome> {
         floatingActionButton: FloatingActionButton(
             foregroundColor: Colors.white,
             backgroundColor: Colors.blueAccent,
-            onPressed: () {
+            onPressed: () async {
               //redireccionar a Formlario.dart
-              Navigator.push(context,
+              await Navigator.push(context,
                   MaterialPageRoute(builder: (context) => Formulario()));
+              productGet();
             },
             child: Icon(Icons.add)));
   }
