@@ -86,34 +86,51 @@ class _MyHomeState extends State<MyHome> {
                             IconButton(
                               icon: Icon(Icons.delete),
                               onPressed: () async {
-                                AlertDialog(
-                                  title: Text("Eliminar"),
-                                  content: Text(
-                                      "¿Estas seguro de eliminar este producto?"),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text('Cancelar'),
-                                    ),
-                                    TextButton(
-                                        onPressed: () async {
-                                          var url = Uri.parse(dotenv
-                                                  .env['API_BACK']! +
-                                              '/products/' +
-                                              products[index]['id'].toString());
-                                          var response = await http.delete(url);
-                                          if (response.statusCode == 200) {
-                                            productGet();
-                                          } else {
-                                            print(
-                                                'Request failed with status: ${response.statusCode}.');
-                                          }
-                                        },
-                                        child: Text("Eliminar"))
-                                  ],
-                                );
+                                return showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text(
+                                            'Se eliminará el producto'),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            child: const Text('Eliminar'),
+                                            onPressed: () async {
+                                              var url = Uri.parse(
+                                                  dotenv.env['API_BACK']! +
+                                                      '/products/' +
+                                                      products[index]['id']
+                                                          .toString());
+                                              var response =
+                                                  await http.delete(url);
+                                              if (response.statusCode == 200) {
+                                                productGet();
+                                              } else {
+                                                print(
+                                                    'Request failed with status: ${response.statusCode}.');
+                                              }
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                          TextButton(
+                                            child: const Text('Cancel'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    });
+                                // var url = Uri.parse(dotenv.env['API_BACK']! +
+                                //     '/products/' +
+                                //     products[index]['id'].toString());
+                                // var response = await http.delete(url);
+                                // if (response.statusCode == 200) {
+                                //   productGet();
+                                // } else {
+                                //   print(
+                                //       'Request failed with status: ${response.statusCode}.');
+                                // }
                               },
                             ),
                           ],
