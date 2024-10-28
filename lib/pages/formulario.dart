@@ -1,14 +1,15 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert' as convert;
 import 'package:http/http.dart' as http;
+import 'package:localstorage/localstorage.dart';
 
 class Formulario extends StatefulWidget {
   final int? id;
   final String? name;
   final String? price;
   final String? amount;
-
   const Formulario({
     super.key,
     this.id,
@@ -25,7 +26,6 @@ class _FormularioState extends State<Formulario> {
   TextEditingController nameController = TextEditingController();
   TextEditingController priceController = TextEditingController();
   TextEditingController amountController = TextEditingController();
-
   initState() {
     super.initState();
     if (widget.id != null) {
@@ -35,7 +35,6 @@ class _FormularioState extends State<Formulario> {
     }
   }
 
-//metodos
   registrar() {
     if (nameController.text.isEmpty ||
         priceController.text.isEmpty ||
@@ -47,10 +46,13 @@ class _FormularioState extends State<Formulario> {
       );
     }
     var url = Uri.parse(dotenv.env['API_BACK']! + '/products');
+    var token = localStorage.getItem('token');
     http.post(url, body: {
       'name': nameController.text,
       'price': priceController.text,
       'amount': amountController.text,
+    }, headers: {
+      'Authorization': 'Bearer $token',
     }).then((value) {
       print(value.statusCode);
       if (value.statusCode == 201) {
@@ -63,39 +65,46 @@ class _FormularioState extends State<Formulario> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: const Text('Formulario'),
+        backgroundColor: Colors.red,
         foregroundColor: Colors.white,
-        backgroundColor: Colors.blueAccent,
-        title: Text("Formulario"),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(15.0),
+        padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
             TextField(
               controller: nameController,
-              decoration: InputDecoration(labelText: "Nombre"),
+              decoration: const InputDecoration(
+                labelText: 'Nombre',
+              ),
             ),
             TextField(
               controller: priceController,
-              decoration: InputDecoration(labelText: "Precio"),
+              decoration: const InputDecoration(
+                labelText: 'Precio',
+              ),
               keyboardType: TextInputType.number,
             ),
             TextField(
               controller: amountController,
-              decoration: InputDecoration(labelText: "Cantidad"),
+              decoration: const InputDecoration(
+                labelText: 'Cantidad',
+              ),
               keyboardType: TextInputType.number,
             ),
-            //Actualizar
             widget.id != null
                 ? ElevatedButton(
                     onPressed: () {
-                      //  var token = localStorage.getItem('token');
+                      var token = localStorage.getItem('token');
                       var url = Uri.parse(
                           dotenv.env['API_BACK']! + '/products/${widget.id}');
                       http.put(url, body: {
                         'name': nameController.text,
                         'price': priceController.text,
                         'amount': amountController.text,
+                      }, headers: {
+                        'Authorization': 'Bearer $token',
                       }).then((value) {
                         print(value.statusCode);
                         if (value.statusCode == 200) {
@@ -105,7 +114,10 @@ class _FormularioState extends State<Formulario> {
                     },
                     child: const Text('Actualizar'),
                   )
-                : ElevatedButton(onPressed: registrar, child: Text("Guardar"))
+                : ElevatedButton(
+                    onPressed: registrar,
+                    child: const Text('Guardar'),
+                  ),
           ],
         ),
       ),

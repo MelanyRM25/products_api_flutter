@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert' as convert;
 import 'package:http/http.dart' as http;
+import 'package:localstorage/localstorage.dart';
+//import 'package:localstorage/localstorage.dart';
 
 class MyHome extends StatefulWidget {
   const MyHome({super.key});
@@ -23,11 +25,17 @@ class _MyHomeState extends State<MyHome> {
   }
 
   productGet() async {
+    var token = localStorage.getItem('token');
+
     var url = Uri.parse(dotenv.env['API_BACK']! + '/products');
 
-    var response = await http.get(url);
+    var response = await http.get(url, headers: {
+      'Authorization': 'Bearer $token',
+    });
     if (response.statusCode == 200) {
       var jsonResponse = convert.jsonDecode(response.body);
+      print(jsonResponse);
+
       setState(() {
         products = jsonResponse;
       });
@@ -47,7 +55,7 @@ class _MyHomeState extends State<MyHome> {
         appBar: AppBar(
           backgroundColor: Colors.blueAccent,
           foregroundColor: Colors.white,
-          title: Text("Mi app"),
+          title: Text("Productos"),
         ),
         body: Center(
           child: Column(
@@ -110,13 +118,18 @@ class _MyHomeState extends State<MyHome> {
                                           TextButton(
                                             child: const Text('Eliminar'),
                                             onPressed: () async {
+                                              var token =
+                                                  localStorage.getItem('token');
                                               var url = Uri.parse(
                                                   dotenv.env['API_BACK']! +
                                                       '/products/' +
                                                       products[index]['id']
                                                           .toString());
-                                              var response =
-                                                  await http.delete(url);
+                                              var response = await http
+                                                  .delete(url, headers: {
+                                                'Authorization':
+                                                    'Bearer $token',
+                                              });
                                               if (response.statusCode == 200) {
                                                 productGet();
                                               } else {
